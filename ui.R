@@ -2,6 +2,7 @@ library(shiny)
 library(dplyr)
 library(ggplot2)
 library(maps)
+library(plotly)
 
 state.data <- read.csv("data/Outpatient_Imaging_Efficiency_-_State.csv")
 hospital.data <- read.csv("data/Outpatient_Imaging_Efficiency_-_Hospital.csv")
@@ -18,7 +19,7 @@ ui <- fluidPage(
     mainPanel(
       tabsetPanel(type = "tabs",
         tabPanel("Results"),
-        tabPanel("Map", plotOutput("map")),
+        tabPanel("Map", plotlyOutput("map")),
         tabPanel("Plot")
       )
     )
