@@ -56,7 +56,7 @@ function(input, output) {
       layout(title = "Number of radiologists by state (hover for exact number)",
              geo = map.specifications,
              autosize = F,
-             width = 800,
+             width = 800, 
              height = 500, 
              margin = render.specifications)
   })
