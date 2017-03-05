@@ -20,8 +20,13 @@ function(input, output) {
   # Creating the USA map by state
   output$map <- renderPlotly({
     
+    # Abbreviations within the dataset that are not the 50 states that need to be removed
+    non.state.abbreviations <- c("DC", "GU", "PR")
+    
     # Finding the number of radiologists by state by the different types listed above
     num.radiologists.by.state <- radiologist.data %>%
+                                 # Filtering out state abbreviations that are not the 50 states shown in the plot
+                                 filter(!(State %in% non.state.abbreviations)) %>%
                                  group_by(State) %>%
                                  summarise(n = n())
 
@@ -59,6 +64,32 @@ function(input, output) {
              width = 800, 
              height = 500, 
              margin = render.specifications)
+  })
+  
+  # Returns a data table of the hospitals within the given state
+  output$click <- renderDataTable({
+    data.from.click <- event_data("plotly_click")
+    if(is.null(data.from.click)) {
+      "Click to get detailed hospital information"
+    } else {
+      
+      # Getting the corresponding row number for the state that they clicked on
+      # need to add 1 because pointNumber starts from 0
+      corresponding.row.number <- event_data$pointNumber + 1
+      
+      # Getting the state corresponding to the row number 
+      corresponding.state <- num.radiologists.by.state[responding.row.number, ] %>%
+                             select(State) %>%
+        
+      ###### Need to update this to work - it's not recognizing the corresponding.state$State call properly and
+        #### not getting the state name
+                             corresponding.state$State
+      
+      # Returning the hospitals of the clicked state (need to change to get top 5 for specified category)
+      hospitals.of.clicked.state <- hospital.data %>%
+                                    filter_("State" %in% corresponding.state)
+      return(hospitals.of.clicked.state)
+    }
   })
 
 

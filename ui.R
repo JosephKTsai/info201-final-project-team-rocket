@@ -19,7 +19,7 @@ ui <- fluidPage(
     mainPanel(
       tabsetPanel(type = "tabs",
         tabPanel("Results"),
-        tabPanel("Map", plotlyOutput("map")),
+        tabPanel("Map", plotlyOutput("map"), dataTableOutput("click")),
         tabPanel("Plot")
       )
     )
