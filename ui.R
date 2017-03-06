@@ -18,7 +18,7 @@ ui <- fluidPage(
       tabsetPanel(type = "tabs",
         tabPanel("Results"),
         tabPanel("Map"),
-        tabPanel("Plot")
+        tabPanel("Plot", plotOutput('plot'))
       )
     )
   )
