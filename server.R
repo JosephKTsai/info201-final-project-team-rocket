@@ -8,13 +8,13 @@ physician.data <- read.csv("data/Physician_Compare_National_Downloadable_File.cs
 measures <- unique(state.data$Measure.Name)
 
 server <- function(input, output) {
-  filtered.hospital <- reactive({
-    data.hospital <- hospital.data %>% 
+  filtered <- reactive({
+    data.state <- state.data %>% 
       filter(Measure.Name == input$measure) %>%
       select(State, Measure.Name, Score) %>%
       group_by(State) 
     
-    data <- data.hospital
+    data <- data.state
     
     return (data)
   })
@@ -49,7 +49,7 @@ server <- function(input, output) {
   
   output$plot <- renderPlot({
     ggplot() +
-      geom_point(data = filtered.hospital(), mapping = aes(x = State, y = Score)) +
+      geom_point(data = filtered(), mapping = aes(x = State, y = Score)) +
       geom_smooth()
   }, height = 800, width = 1000)
   
