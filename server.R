@@ -14,25 +14,30 @@ radiologist.data <- read.csv("data/Physician_Compare_National_Downloadable_File.
 
 interactive.graph.data <- reactiveValues()
 interactive.graph.data$top5 <- ""
+interactive.graph.data$num.radiologists.by.state <- ""
 
 function(input, output) {
   
+  # Abbreviations within the dataset that are not the 50 states that need to be removed
+  non.state.abbreviations <- c("DC", "GU", "PR")
+  
+  # Finding the number of radiologists by state by the different types listed above
+  num.radiologists.by.state <-  radiologist.data %>%
+                                # Filtering out state abbreviations that are not the 50 states shown in the plot
+                                filter(!(State %in% non.state.abbreviations)) %>%
+                                group_by(State) %>%
+                                summarise(n = n())
+  
+  # Creating the output for when somebody hovers over a state
+  num.radiologists.by.state$hover <- with(num.radiologists.by.state, 
+                                          paste0(State))
+  
+  # need to update the reactive value so we can use it in later funcitons
+  interactive.graph.data$num.radiologists.by.state <- num.radiologists.by.state
+  
   # Creating the USA map by state
   output$map <- renderPlotly({
-    
-    # Abbreviations within the dataset that are not the 50 states that need to be removed
-    non.state.abbreviations <- c("DC", "GU", "PR")
-    
-    # Finding the number of radiologists by state by the different types listed above
-    num.radiologists.by.state <- radiologist.data %>%
-                                 # Filtering out state abbreviations that are not the 50 states shown in the plot
-                                 filter(!(State %in% non.state.abbreviations)) %>%
-                                 group_by(State) %>%
-                                 summarise(n = n())
 
-    # Creating the output for when somebody hovers over a state
-    num.radiologists.by.state$hover <- with(num.radiologists.by.state, 
-                                            paste0(State))
     # Specifying the map scope
     map.specifications <- list(
       scope = 'usa',
@@ -75,20 +80,47 @@ function(input, output) {
       
       # Getting the corresponding row number for the state that they clicked on
       # need to add 1 because pointNumber starts from 0
-      corresponding.row.number <- event_data$pointNumber + 1
+      corresponding.row.number <- data.from.click$pointNumber + 1
       
       # Getting the state corresponding to the row number 
-      corresponding.state <- num.radiologists.by.state[responding.row.number, ] %>%
-                             select(State) %>%
-        
-      ###### Need to update this to work - it's not recognizing the corresponding.state$State call properly and
-        #### not getting the state name
-                             corresponding.state$State
+      corresponding.state <- num.radiologists.by.state[corresponding.row.number, ] %>%
+                             select(State)
+      corresponding.state <- corresponding.state$State
       
-      # Returning the hospitals of the clicked state (need to change to get top 5 for specified category)
+      # Returning the top hospitals of the clicked state for the specified scan
       hospitals.of.clicked.state <- hospital.data %>%
-                                    filter_("State" %in% corresponding.state)
-      return(hospitals.of.clicked.state)
+                                    filter(State == corresponding.state,
+                                           # Filtering for the measure name chosen by the user
+                                           Measure.Name == as.name(input$measure),
+                                           Score != "Not Available") %>%
+                                    # Arranging from highest score to lowest score
+                                    arrange(desc(Score)) %>%
+                                    select(Provider.ID, 
+                                           Hospital.Name, 
+                                           Address, City, 
+                                           State, 
+                                           ZIP.Code,
+                                           County.Name,
+                                           Phone.Number,
+                                           Measure.Name,
+                                           Score)
+      
+      # Getting the top 5 hospitals
+      top.5.hospitals.of.clicked.state <- hospitals.of.clicked.state[1:5, ]
+      
+      # Making "readable" column names
+      colnames(top.5.hospitals.of.clicked.state) <- c("Provider ID",
+                                                       "Hospital Name",
+                                                       "Address",
+                                                       "City",
+                                                       "State",
+                                                       "ZIP Code",
+                                                       "County Name",
+                                                       "Phone Number",
+                                                       "Measure Name",
+                                                       "Score")
+                                    
+      return(top.5.hospitals.of.clicked.state)
     }
   })
 
