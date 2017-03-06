@@ -7,7 +7,11 @@ library(plotly)
 state.data <- read.csv("data/Outpatient_Imaging_Efficiency_-_State.csv")
 hospital.data <- read.csv("data/Outpatient_Imaging_Efficiency_-_Hospital.csv")
 measures <- unique(state.data$Measure.Name)
- 
+
+states <- unique(state.data$State)
+
+
+
 ui <- fluidPage(
   titlePanel("Outpatient Efficiency for Selected Measures"),
   sidebarLayout(
@@ -18,8 +22,9 @@ ui <- fluidPage(
     ),
     mainPanel(
       tabsetPanel(type = "tabs",
-        tabPanel("Results"),
-
+        tabPanel("Results", 
+                 selectInput('state', label = "Select state", choices = states),
+                 dataTableOutput('best.hospitals') ) ,
         tabPanel("Map", plotlyOutput("map"), dataTableOutput("click")),
         tabPanel("Plot", plotOutput('plot'))
       )

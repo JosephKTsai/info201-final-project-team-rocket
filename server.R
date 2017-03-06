@@ -18,6 +18,26 @@ interactive.graph.data$top5 <- ""
 interactive.graph.data$num.radiologists.by.state <- ""
 
 server <- function(input, output) {
+  
+  # Finding the best 5 hospitals in the selected state for the selected scanning.
+  filtered.data <- reactive({
+    state <- input$state
+    measure <- input$measure
+    best.hospital <- filter(hospital.data, State == state) %>% 
+                      filter(Measure.Name == measure) %>% 
+                        arrange(desc(Score))
+    best.hospital <- best.hospital[!(best.hospital$Score == "Not Available"), ]
+    best.hospital <- best.hospital[c(1:5), c("Provider.ID", "Hospital.Name", "City", "Address", "ZIP.Code", "Phone.Number")]
+    # Changing the column names to more readable names.
+    colnames(best.hospital) <- c("Provider ID", "Hospital Name", "City", "Address", "ZIP Code", "Phone Number")
+    return(best.hospital)
+  })
+  
+  # Render the data table for the top 5 hospitals in the selected state
+  output$best.hospitals <- renderDataTable({
+    return(filtered.data())
+  })
+  
   filtered <- reactive({
     data.state <- state.data %>% 
       filter(Measure.Name == input$measure) %>%
@@ -54,6 +74,8 @@ server <- function(input, output) {
   
   # need to update the reactive value so we can use it in later funcitons
   interactive.graph.data$num.radiologists.by.state <- num.radiologists.by.state
+  
+ 
   
   # Creating the USA map by state
   output$map <- renderPlotly({
