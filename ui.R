@@ -27,13 +27,15 @@ ui <- fluidPage(
     
     mainPanel(
       tabsetPanel(type = "tabs",
+
         tabPanel("Results", 
                  selectInput('state', label = "Select state", choices = states),
                  dataTableOutput('best.hospitals')),
         tabPanel("Map",
-                 verbatimTextOutput("map.description"),
+                 textOutput("map.description"),
                  plotlyOutput("map"), 
                  dataTableOutput("click")),
+
         tabPanel("Plot", verbatimTextOutput("plot.description"), plotOutput('plot')),
         tabPanel("Summary", verbatimTextOutput("intro.description"))
 
