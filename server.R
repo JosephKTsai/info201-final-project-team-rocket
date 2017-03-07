@@ -23,14 +23,15 @@ server <- function(input, output) {
                       filter(Measure.Name == measure) %>% 
                         arrange(desc(Score))
     best.hospital <- best.hospital[!(best.hospital$Score == "Not Available"), ]
-    best.hospital <- best.hospital[c(1:5), c("Provider.ID", "Hospital.Name", "City", "Address", "ZIP.Code", "Phone.Number")]
+    best.hospital <- best.hospital[c(1:5), c("Provider.ID", "Hospital.Name", "City", "Address", "ZIP.Code", "Phone.Number", "Score")]
     # Changing the column names to more readable names.
-    colnames(best.hospital) <- c("Provider ID", "Hospital Name", "City", "Address", "ZIP Code", "Phone Number")
+    colnames(best.hospital) <- c("Provider ID", "Hospital Name", "City", "Address", "ZIP Code", "Phone Number", "Score")
     return(best.hospital)
   })
   
   # Render the data table for the top 5 hospitals in the selected state
   output$best.hospitals <- renderDataTable({
+    
     return(filtered.data())
   })
   
@@ -171,7 +172,8 @@ server <- function(input, output) {
     ggplot(data = filtered()) +
       geom_point(mapping = aes(x = State, y = Score, size = n, color = n)) +
       scale_color_gradient(low = "blue") +
-      labs(title = "Score of Specified Imaging Procedure in Each State", color = "# of Radiologists", size = "# of Radiologists")
+      labs(title = "Score of Specified Imaging Procedure in Each State", color = "# of Radiologists", size = "# of Radiologists") +
+      theme(plot.title = element_text(size = rel(2.5)))
   }, height = 700, width = 1500)
   
   output$intro.description <- renderText({
@@ -193,8 +195,7 @@ server <- function(input, output) {
                                 "to lower back pain? How many radiologists are in that state?")
   })
 
-
-
+  
   # Map Decription
   output$map.description <- renderText({
     plot.description <- paste0("Map Description:\n",
@@ -202,9 +203,12 @@ server <- function(input, output) {
                                "The darker a state is, the more radiologists are present within that state. ",
                                "If a state is hovered over, it will display the exact number of radiologists within the state. ", 
                                "If a state is clicked, a table will appear that shows the top 5 hospitals within that state ", 
-                               "for the selected measure."
-                               )
+                               "for the selected measure.")
   })
-}
+  
+  }
+
+
+
 
 shinyServer(server)
