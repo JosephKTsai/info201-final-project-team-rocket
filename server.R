@@ -201,9 +201,7 @@ server <- function(input, output) {
                                 "to lower back pain? How many radiologists are in that state?
                                 
                                 ")
-  })
-  
-  
+  }) 
   # Map Decription
   output$map.description <- renderText({
     plot.description <- paste0("Map Description:\n",
