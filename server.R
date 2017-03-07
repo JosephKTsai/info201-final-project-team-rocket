@@ -163,7 +163,7 @@ server <- function(input, output) {
   output$plot.description <- renderText({
     description <- paste0("The below plot shows the State on the X axis, the Efficiency score for the chosen imaging method on the Y axis, as well as showing the number of radiologists per state through the point color and size. ",
                              "The larger the size of the point and the lighter the color represents the greater number of physicians\n\n ",
-                             "The current selected imaging method is: ", bold(toString(input$measure)))
+                             "The current selected imaging method is: ", strong(toString(input$measure)))
   })
 
   # Output for radiologists plot vs. specified imaging
@@ -192,7 +192,7 @@ server <- function(input, output) {
                                 "Specific questions users may have answered include: Which state provides the most efficient MRI for the Lumbar Spine in regards ",
                                 "to lower back pain? How many radiologists are in that state?")
   })
-}
+
 
 
   # Map Decription
