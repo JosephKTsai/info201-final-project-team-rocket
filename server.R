@@ -20,8 +20,8 @@ server <- function(input, output) {
     state <- input$state
     measure <- input$measure
     best.hospital <- filter(hospital.data, State == state) %>% 
-                      filter(Measure.Name == measure) %>% 
-                        arrange(desc(Score))
+      filter(Measure.Name == measure) %>% 
+      arrange(desc(Score))
     best.hospital <- best.hospital[!(best.hospital$Score == "Not Available"), ]
     best.hospital <- best.hospital[c(1:5), c("Provider.ID", "Hospital.Name", "City", "Address", "ZIP.Code", "Phone.Number", "Score")]
     # Changing the column names to more readable names.
@@ -50,25 +50,25 @@ server <- function(input, output) {
     non.state.abbreviations <- c("DC", "GU", "PR")
     num.radiologists.by.state <-  radiologist.data %>%
       
-    # Filtering out state abbreviations that are not the 50 states shown in the plot
-    filter(!(State %in% non.state.abbreviations)) %>%
-    group_by(State) %>%
-    summarise(n = n())
+      # Filtering out state abbreviations that are not the 50 states shown in the plot
+      filter(!(State %in% non.state.abbreviations)) %>%
+      group_by(State) %>%
+      summarise(n = n())
     
     data <- full_join(data.state, num.radiologists.by.state)
     
     return (data)
   })
-
+  
   # Abbreviations within the dataset that are not the 50 states that need to be removed
   non.state.abbreviations <- c("DC", "GU", "PR")
   
   # Finding the number of radiologists by state by the different types listed above
   num.radiologists.by.state <-  radiologist.data %>%
-                                # Filtering out state abbreviations that are not the 50 states shown in the plot
-                                filter(!(State %in% non.state.abbreviations)) %>%
-                                group_by(State) %>%
-                                summarise(n = n())
+    # Filtering out state abbreviations that are not the 50 states shown in the plot
+    filter(!(State %in% non.state.abbreviations)) %>%
+    group_by(State) %>%
+    summarise(n = n())
   
   # Creating the output for when somebody hovers over a state
   num.radiologists.by.state$hover <- with(num.radiologists.by.state, 
@@ -76,7 +76,7 @@ server <- function(input, output) {
   
   # Creating the USA map by state
   output$map <- renderPlotly({
-
+    
     # Specifying the map scope
     map.specifications <- list(
       scope = 'usa',
@@ -125,54 +125,54 @@ server <- function(input, output) {
       
       # Getting the state corresponding to the row number 
       corresponding.state <- num.radiologists.by.state[corresponding.row.number, ] %>%
-                             select(State)
+        select(State)
       
       # Obtaining the corresponding state in vector form
       corresponding.state <- corresponding.state$State
       
       # Returning the top hospitals of the clicked state for the specified scan
       hospitals.of.clicked.state <- hospital.data %>%
-                                    filter(State == corresponding.state,
-                                           # Filtering for the measure name chosen by the user
-                                           Measure.Name == as.name(input$measure),
-                                           Score != "Not Available") %>%
-                                    # Arranging from highest score to lowest score
-                                    arrange(desc(Score)) %>%
-                                    select(Provider.ID, 
-                                           Hospital.Name, 
-                                           Address, City, 
-                                           State, 
-                                           ZIP.Code,
-                                           County.Name,
-                                           Phone.Number,
-                                           Measure.Name,
-                                           Score)
+        filter(State == corresponding.state,
+               # Filtering for the measure name chosen by the user
+               Measure.Name == as.name(input$measure),
+               Score != "Not Available") %>%
+        # Arranging from highest score to lowest score
+        arrange(desc(Score)) %>%
+        select(Provider.ID, 
+               Hospital.Name, 
+               Address, City, 
+               State, 
+               ZIP.Code,
+               County.Name,
+               Phone.Number,
+               Measure.Name,
+               Score)
       
       # Getting the top 5 hospitals
       top.5.hospitals.of.clicked.state <- hospitals.of.clicked.state[1:5, ]
       
       # Making "readable" column names
       colnames(top.5.hospitals.of.clicked.state) <- c("Provider ID",
-                                                       "Hospital Name",
-                                                       "Address",
-                                                       "City",
-                                                       "State",
-                                                       "ZIP Code",
-                                                       "County Name",
-                                                       "Phone Number",
-                                                       "Measure Name",
-                                                       "Score")
-                                    
+                                                      "Hospital Name",
+                                                      "Address",
+                                                      "City",
+                                                      "State",
+                                                      "ZIP Code",
+                                                      "County Name",
+                                                      "Phone Number",
+                                                      "Measure Name",
+                                                      "Score")
+      
       return(top.5.hospitals.of.clicked.state)
     }
   })
   
   output$plot.description <- renderText({
     description <- paste0("The below plot shows the State on the X axis, the Efficiency score for the chosen imaging method on the Y axis, as well as showing the number of radiologists per state through the point color and size. ",
-                             "The larger the size of the point and the lighter the color represents the greater number of physicians\n\n ",
-                             "The current selected imaging method is: ", strong(toString(input$measure)))
+                          "The larger the size of the point and the lighter the color represents the greater number of physicians\n\n ",
+                          "The current selected imaging method is: ", bold(toString(input$measure)))
   })
-
+  
   # Output for radiologists plot vs. specified imaging
   output$plot <- renderPlot({
     ggplot(data = filtered()) +
@@ -202,7 +202,7 @@ server <- function(input, output) {
                                 
                                 ")
   })
-
+  
   
   # Map Decription
   output$map.description <- renderText({
