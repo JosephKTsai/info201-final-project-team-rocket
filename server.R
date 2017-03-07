@@ -205,7 +205,7 @@ server <- function(input, output) {
                                "If a state is clicked, a table will appear that shows the top 5 hospitals within that state ", 
                                "for the selected measure.")
   })
-  
+
   }
 
 
