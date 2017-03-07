@@ -17,11 +17,12 @@ ui <- fluidPage(
       width = 5
     ),
     mainPanel(
-      tabsetPanel(type = "tabs",
+      tabsetPanel(type = "tabs", 
+        tabPanel("Introduction/About", verbatimTextOutput("intro.description")),
         tabPanel("Results"),
 
         tabPanel("Map", plotlyOutput("map"), dataTableOutput("click")),
-        tabPanel("Plot", plotOutput('plot'))
+        tabPanel("Plot", verbatimTextOutput("plot.description"), plotOutput('plot'))
       )
     )
   )

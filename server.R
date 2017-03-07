@@ -36,7 +36,6 @@ server <- function(input, output) {
     
     return (data)
   })
-  
 
   # Abbreviations within the dataset that are not the 50 states that need to be removed
   non.state.abbreviations <- c("DC", "GU", "PR")
@@ -143,6 +142,12 @@ server <- function(input, output) {
       return(top.5.hospitals.of.clicked.state)
     }
   })
+  
+  output$plot.description <- renderText({
+    description <- paste0("The below plot shows the State on the X axis, the Efficiency score for the chosen imaging method on the Y axis, as well as showing the number of radiologists per state through the point color and size. ",
+                             "The larger the size of the point and the lighter the color represents the greater number of physicians\n\n ",
+                             "The current selected imaging method is: ", bold(toString(input$measure)))
+  })
 
   output$plot <- renderPlot({
     ggplot(data = filtered()) +
@@ -150,7 +155,27 @@ server <- function(input, output) {
       scale_color_gradient(low = "blue") +
       labs(title = "Score of Specified Imaging Procedure in Each State", color = "# of Radiologists", size = "# of Radiologists")
   }, height = 700, width = 1500)
+  
+  output$intro.description <- renderText({
+    about.description <- paste0("    The following visualizations of data represent information taken from several Medicare.gov ", 
+                                "data frames regarding outpatient imaging efficiency and physician comparison data. ", 
+                                "The original collectors of the data are the Centers for Medicare & Medicaid Services (which is a federal service). ",
+                                "This data set was created because certain medical information, such as that of outpatient imaging ", 
+                                "efficiency and logistical physician data (like their physician ID and so forth) need to remain transparent ",
+                                "to the public. For the outpatient imaging efficiency data, it contains five measurements of outpatient imaging efficiency: ",
+                                "abdomen CT use of Contrast Material, Thorax CT Use of Contrast Material, Out patients who got cardiac imaging stress ",
+                                "tests before low-risk outpatient surgery, outpatients with brain CT scans who got sinus CT scan at the same time, MRI lumbar Spine ",
+                                "for Low Back Pain, and Mammography follow-up rates by state. For the physician data, it can give us the number of doctors/specialist in ",
+                                "a certain area of study.\n\n", 
+                                "    Specifically, there is a map visualization, that allows users to view efficiency scores and physicians numbers for states that ",
+                                "they interact with. In addition, there is a searching function as well as a data plot for further comparison of efficiency ",
+                                "scores and physician numbers, by state. This allows the audience to gain a greater understanding the relationship between efficiency score and number of radiologists in that state. Each method will be organized by hospital, ",
+                                "state and score in addition to later on being compared to specific physicians and number of physicians. ", 
+                                "Specific questions users may have answered include: Which state provides the most efficient MRI for the Lumbar Spine in regards ",
+                                "to lower back pain? How many radiologists are in that state?")
+  })
 }
+
 
 
 shinyServer(server)
