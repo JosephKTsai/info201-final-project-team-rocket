@@ -27,12 +27,15 @@ ui <- fluidPage(
     
     mainPanel(
       tabsetPanel(type = "tabs",
-
-        tabPanel("Results", 
+        tabPanel("Introduction/About", br(), textOutput("intro.description"), br(), p("This data was obtained from data.medicare.gov") ) ,
+        tabPanel("Results",
                  selectInput('state', label = "Select state", choices = states),
+                 textOutput('results.intro'), br(),
                  dataTableOutput('best.hospitals')),
         tabPanel("Map",
+                 br(),
                  textOutput("map.description"),
+                 br(),
                  plotlyOutput("map"), 
                  dataTableOutput("click")),
 
@@ -44,4 +47,3 @@ ui <- fluidPage(
     )
   )
 )
-

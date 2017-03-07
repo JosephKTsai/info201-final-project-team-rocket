@@ -35,6 +35,12 @@ server <- function(input, output) {
     return(filtered.data())
   })
   
+  output$results.intro <- renderText({
+    rows <- nrow(filtered.data())
+    intro <- paste0("This table shows data about the top ", rows, " hospitals in the ", input$state, " state for the ",
+                    input$measure, " scan.")
+  })
+  
   filtered <- reactive({
     data.state <- state.data %>% 
       filter(Measure.Name == input$measure) %>%
@@ -192,7 +198,9 @@ server <- function(input, output) {
                                 "scores and physician numbers, by state. This allows the audience to gain a greater understanding the relationship between efficiency score and number of radiologists in that state. Each method will be organized by hospital, ",
                                 "state and score in addition to later on being compared to specific physicians and number of physicians. ", 
                                 "Specific questions users may have answered include: Which state provides the most efficient MRI for the Lumbar Spine in regards ",
-                                "to lower back pain? How many radiologists are in that state?")
+                                "to lower back pain? How many radiologists are in that state?
+                                
+                                ")
   })
 
   
