@@ -13,10 +13,6 @@ measures <- unique(state.data$Measure.Name)
 us.map <- map_data("state")
 radiologist.data <- read.csv("data/Physician_Compare_National_Downloadable_File.csv", stringsAsFactors = FALSE)
 
-interactive.graph.data <- reactiveValues()
-interactive.graph.data$top5 <- ""
-interactive.graph.data$num.radiologists.by.state <- ""
-
 server <- function(input, output) {
   
   # Finding the best 5 hospitals in the selected state for the selected scanning.
@@ -57,7 +53,6 @@ server <- function(input, output) {
     
     return (data)
   })
-  
 
   # Abbreviations within the dataset that are not the 50 states that need to be removed
   non.state.abbreviations <- c("DC", "GU", "PR")
@@ -72,11 +67,6 @@ server <- function(input, output) {
   # Creating the output for when somebody hovers over a state
   num.radiologists.by.state$hover <- with(num.radiologists.by.state, 
                                           paste0(State))
-  
-  # need to update the reactive value so we can use it in later funcitons
-  interactive.graph.data$num.radiologists.by.state <- num.radiologists.by.state
-  
- 
   
   # Creating the USA map by state
   output$map <- renderPlotly({
@@ -103,6 +93,8 @@ server <- function(input, output) {
                 color = ~n, 
                 colors = "Blues"
       ) %>%
+      
+      # Setting the color bar title
       colorbar(title = "Number of Radiologists") %>%
       
       # Choosing the layout based off of our map specifications 
@@ -128,6 +120,8 @@ server <- function(input, output) {
       # Getting the state corresponding to the row number 
       corresponding.state <- num.radiologists.by.state[corresponding.row.number, ] %>%
                              select(State)
+      
+      # Obtaining the corresponding state in vector form
       corresponding.state <- corresponding.state$State
       
       # Returning the top hospitals of the clicked state for the specified scan
@@ -166,7 +160,14 @@ server <- function(input, output) {
       return(top.5.hospitals.of.clicked.state)
     }
   })
+  
+  output$plot.description <- renderText({
+    description <- paste0("The below plot shows the State on the X axis, the Efficiency score for the chosen imaging method on the Y axis, as well as showing the number of radiologists per state through the point color and size. ",
+                             "The larger the size of the point and the lighter the color represents the greater number of physicians\n\n ",
+                             "The current selected imaging method is: ", bold(toString(input$measure)))
+  })
 
+  # Output for radiologists plot vs. specified imaging
   output$plot <- renderPlot({
     ggplot(data = filtered()) +
       geom_point(mapping = aes(x = State, y = Score, size = n, color = n)) +
@@ -174,8 +175,38 @@ server <- function(input, output) {
       labs(title = "Score of Specified Imaging Procedure in Each State", color = "# of Radiologists", size = "# of Radiologists") +
       theme(plot.title = element_text(size = rel(2.5)))
   }, height = 700, width = 1500)
+  
+  output$intro.description <- renderText({
+    about.description <- paste0("    The following visualizations of data represent information taken from several Medicare.gov ", 
+                                "data frames regarding outpatient imaging efficiency and physician comparison data. ", 
+                                "The original collectors of the data are the Centers for Medicare & Medicaid Services (which is a federal service). ",
+                                "This data set was created because certain medical information, such as that of outpatient imaging ", 
+                                "efficiency and logistical physician data (like their physician ID and so forth) need to remain transparent ",
+                                "to the public. For the outpatient imaging efficiency data, it contains five measurements of outpatient imaging efficiency: ",
+                                "abdomen CT use of Contrast Material, Thorax CT Use of Contrast Material, Out patients who got cardiac imaging stress ",
+                                "tests before low-risk outpatient surgery, outpatients with brain CT scans who got sinus CT scan at the same time, MRI lumbar Spine ",
+                                "for Low Back Pain, and Mammography follow-up rates by state. For the physician data, it can give us the number of doctors/specialist in ",
+                                "a certain area of study.\n\n", 
+                                "    Specifically, there is a map visualization, that allows users to view efficiency scores and physicians numbers for states that ",
+                                "they interact with. In addition, there is a searching function as well as a data plot for further comparison of efficiency ",
+                                "scores and physician numbers, by state. This allows the audience to gain a greater understanding the relationship between efficiency score and number of radiologists in that state. Each method will be organized by hospital, ",
+                                "state and score in addition to later on being compared to specific physicians and number of physicians. ", 
+                                "Specific questions users may have answered include: Which state provides the most efficient MRI for the Lumbar Spine in regards ",
+                                "to lower back pain? How many radiologists are in that state?")
+  })
 }
 
 
-shinyServer(server)
+  # Map Decription
+  output$map.description <- renderText({
+    plot.description <- paste0("Map Description:\n",
+                               "The map below shows of the number of radiologists per state. ",
+                               "The darker a state is, the more radiologists are present within that state. ",
+                               "If a state is hovered over, it will display the exact number of radiologists within the state. ", 
+                               "If a state is clicked, a table will appear that shows the top 5 hospitals within that state ", 
+                               "for the selected measure."
+                               )
+  })
+}
 
+shinyServer(server)
