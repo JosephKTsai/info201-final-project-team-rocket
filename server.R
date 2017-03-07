@@ -12,10 +12,6 @@ measures <- unique(state.data$Measure.Name)
 us.map <- map_data("state")
 radiologist.data <- read.csv("data/Physician_Compare_National_Downloadable_File.csv", stringsAsFactors = FALSE)
 
-interactive.graph.data <- reactiveValues()
-interactive.graph.data$top5 <- ""
-interactive.graph.data$num.radiologists.by.state <- ""
-
 function(input, output) {
   
   # Abbreviations within the dataset that are not the 50 states that need to be removed
@@ -31,9 +27,6 @@ function(input, output) {
   # Creating the output for when somebody hovers over a state
   num.radiologists.by.state$hover <- with(num.radiologists.by.state, 
                                           paste0(State))
-  
-  # need to update the reactive value so we can use it in later funcitons
-  interactive.graph.data$num.radiologists.by.state <- num.radiologists.by.state
   
   # Creating the USA map by state
   output$map <- renderPlotly({
@@ -60,6 +53,8 @@ function(input, output) {
                 color = ~n, 
                 colors = "Blues"
       ) %>%
+      
+      # Setting the color bar title
       colorbar(title = "Number of Radiologists") %>%
       
       # Choosing the layout based off of our map specifications 
@@ -85,6 +80,8 @@ function(input, output) {
       # Getting the state corresponding to the row number 
       corresponding.state <- num.radiologists.by.state[corresponding.row.number, ] %>%
                              select(State)
+      
+      # Obtaining the corresponding state in vector form
       corresponding.state <- corresponding.state$State
       
       # Returning the top hospitals of the clicked state for the specified scan
@@ -124,5 +121,16 @@ function(input, output) {
     }
   })
 
+  
+  # Map Decription
+  output$map.description <- renderText({
+    plot.description <- paste0("Map Description:\n",
+                               "The map below shows of the number of radiologists per state. ",
+                               "The darker a state is, the more radiologists are present within that state. ",
+                               "If a state is hovered over, it will display the exact number of radiologists within the state. ", 
+                               "If a state is clicked, a table will appear that shows the top 5 hospitals within that state ", 
+                               "for the selected measure."
+                               )
+  })
 
 }
