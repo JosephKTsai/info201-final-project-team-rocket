@@ -16,6 +16,16 @@ body {
   margin: 0;
 }
 
+label {color: #696969;
+      font-size: 20px;
+      font-style: italic;
+}
+
+Introduction/About-label {
+  color: #696969;
+  font-size: 20px;
+  font-style: italic;
+}
 article,
 aside,
 footer,

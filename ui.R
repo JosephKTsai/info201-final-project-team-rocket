@@ -27,19 +27,23 @@ ui <- fluidPage(
     
     mainPanel(
       tabsetPanel(type = "tabs",
-        tabPanel("Introduction/About", verbatimTextOutput("intro.description")),
-        tabPanel("Results", 
+        tabPanel("Introduction/About", br(), textOutput("intro.description"), br(), p("This data was obtained from data.medicare.gov") ) ,
+        tabPanel("Results",
                  selectInput('state', label = "Select state", choices = states),
+                 textOutput('results.intro'), br(),
                  dataTableOutput('best.hospitals')),
         tabPanel("Map",
-                 verbatimTextOutput("map.description"),
+                 br(),
+                 textOutput("map.description"),
+                 br(),
                  plotlyOutput("map"), 
                  dataTableOutput("click")),
-        tabPanel("Plot", verbatimTextOutput("plot.description"), plotOutput('plot'))
+
+        tabPanel("Plot", verbatimTextOutput("plot.description"), plotOutput('plot')),
+        tabPanel("Summary", verbatimTextOutput("intro.description"))
 
 
       )
     )
   )
 )
-

@@ -23,16 +23,22 @@ server <- function(input, output) {
                       filter(Measure.Name == measure) %>% 
                         arrange(desc(Score))
     best.hospital <- best.hospital[!(best.hospital$Score == "Not Available"), ]
-    best.hospital <- best.hospital[c(1:5), c("Provider.ID", "Hospital.Name", "City", "Address", "ZIP.Code", "Phone.Number")]
+    best.hospital <- best.hospital[c(1:5), c("Provider.ID", "Hospital.Name", "City", "Address", "ZIP.Code", "Phone.Number", "Score")]
     # Changing the column names to more readable names.
-    colnames(best.hospital) <- c("Provider ID", "Hospital Name", "City", "Address", "ZIP Code", "Phone Number")
+    colnames(best.hospital) <- c("Provider ID", "Hospital Name", "City", "Address", "ZIP Code", "Phone Number", "Score")
     return(best.hospital)
   })
   
   # Render the data table for the top 5 hospitals in the selected state
   output$best.hospitals <- renderDataTable({
     
-    filtered.data()
+    return(filtered.data())
+  })
+  
+  output$results.intro <- renderText({
+    rows <- nrow(filtered.data())
+    intro <- paste0("This table shows data about the top ", rows, " hospitals in the ", input$state, " state for the ",
+                    input$measure, " scan.")
   })
   
   filtered <- reactive({
@@ -164,7 +170,7 @@ server <- function(input, output) {
   output$plot.description <- renderText({
     description <- paste0("The below plot shows the State on the X axis, the Efficiency score for the chosen imaging method on the Y axis, as well as showing the number of radiologists per state through the point color and size. ",
                              "The larger the size of the point and the lighter the color represents the greater number of physicians\n\n ",
-                             "The current selected imaging method is: ", bold(toString(input$measure)))
+                             "The current selected imaging method is: ", strong(toString(input$measure)))
   })
 
   # Output for radiologists plot vs. specified imaging
@@ -192,10 +198,13 @@ server <- function(input, output) {
                                 "scores and physician numbers, by state. This allows the audience to gain a greater understanding the relationship between efficiency score and number of radiologists in that state. Each method will be organized by hospital, ",
                                 "state and score in addition to later on being compared to specific physicians and number of physicians. ", 
                                 "Specific questions users may have answered include: Which state provides the most efficient MRI for the Lumbar Spine in regards ",
-                                "to lower back pain? How many radiologists are in that state?")
+                                "to lower back pain? How many radiologists are in that state?
+                                
+                                ")
   })
 
 
+  
   # Map Decription
   output$map.description <- renderText({
     plot.description <- paste0("Map Description:\n",
@@ -203,9 +212,12 @@ server <- function(input, output) {
                                "The darker a state is, the more radiologists are present within that state. ",
                                "If a state is hovered over, it will display the exact number of radiologists within the state. ", 
                                "If a state is clicked, a table will appear that shows the top 5 hospitals within that state ", 
-                               "for the selected measure."
-                               )
+                               "for the selected measure.")
   })
-}
+  
+  }
+
+
+
 
 shinyServer(server)
