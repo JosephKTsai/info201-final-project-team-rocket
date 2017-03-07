@@ -13,10 +13,6 @@ measures <- unique(state.data$Measure.Name)
 us.map <- map_data("state")
 radiologist.data <- read.csv("data/Physician_Compare_National_Downloadable_File.csv", stringsAsFactors = FALSE)
 
-interactive.graph.data <- reactiveValues()
-interactive.graph.data$top5 <- ""
-interactive.graph.data$num.radiologists.by.state <- ""
-
 server <- function(input, output) {
   
   # Finding the best 5 hospitals in the selected state for the selected scanning.
@@ -57,7 +53,6 @@ server <- function(input, output) {
     return (data)
   })
   
-
   # Abbreviations within the dataset that are not the 50 states that need to be removed
   non.state.abbreviations <- c("DC", "GU", "PR")
   
@@ -71,11 +66,6 @@ server <- function(input, output) {
   # Creating the output for when somebody hovers over a state
   num.radiologists.by.state$hover <- with(num.radiologists.by.state, 
                                           paste0(State))
-  
-  # need to update the reactive value so we can use it in later funcitons
-  interactive.graph.data$num.radiologists.by.state <- num.radiologists.by.state
-  
- 
   
   # Creating the USA map by state
   output$map <- renderPlotly({
@@ -102,6 +92,8 @@ server <- function(input, output) {
                 color = ~n, 
                 colors = "Blues"
       ) %>%
+      
+      # Setting the color bar title
       colorbar(title = "Number of Radiologists") %>%
       
       # Choosing the layout based off of our map specifications 
@@ -127,6 +119,8 @@ server <- function(input, output) {
       # Getting the state corresponding to the row number 
       corresponding.state <- num.radiologists.by.state[corresponding.row.number, ] %>%
                              select(State)
+      
+      # Obtaining the corresponding state in vector form
       corresponding.state <- corresponding.state$State
       
       # Returning the top hospitals of the clicked state for the specified scan
@@ -166,14 +160,23 @@ server <- function(input, output) {
     }
   })
 
+  # Output for radiologists plot vs. specified imaging
   output$plot <- renderPlot({
     ggplot(data = filtered()) +
       geom_point(mapping = aes(x = State, y = Score, size = n, color = n)) +
       scale_color_gradient(low = "blue") +
       labs(title = "Score of Specified Imaging Procedure in Each State", color = "# of Radiologists", size = "# of Radiologists")
   }, height = 700, width = 1500)
+  
+  # Map Decription
+  output$map.description <- renderText({
+    plot.description <- paste0("Map Description:\n",
+                               "The map below shows of the number of radiologists per state. ",
+                               "The darker a state is, the more radiologists are present within that state. ",
+                               "If a state is hovered over, it will display the exact number of radiologists within the state. ", 
+                               "If a state is clicked, a table will appear that shows the top 5 hospitals within that state ", 
+                               "for the selected measure."
+                               )
+  })
 }
-
-
 shinyServer(server)
-
