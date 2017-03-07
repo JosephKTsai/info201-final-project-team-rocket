@@ -194,7 +194,6 @@ server <- function(input, output) {
                                 "Specific questions users may have answered include: Which state provides the most efficient MRI for the Lumbar Spine in regards ",
                                 "to lower back pain? How many radiologists are in that state?")
   })
-}
 
 
   # Map Decription
