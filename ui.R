@@ -16,6 +16,7 @@ measures <- unique(state.data$Measure.Name)
 states <- unique(state.data$State)
 
 ui <- fluidPage(
+  theme = "bootstrap.css",
   titlePanel("Outpatient Efficiency for Selected Measures"),
   sidebarLayout(
     sidebarPanel(
@@ -41,3 +42,4 @@ ui <- fluidPage(
     )
   )
 )
+
