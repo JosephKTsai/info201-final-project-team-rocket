@@ -35,7 +35,8 @@ server <- function(input, output) {
   
   # Render the data table for the top 5 hospitals in the selected state
   output$best.hospitals <- renderDataTable({
-    return(filtered.data())
+    
+    filtered.data()
   })
   
   filtered <- reactive({
@@ -170,7 +171,8 @@ server <- function(input, output) {
     ggplot(data = filtered()) +
       geom_point(mapping = aes(x = State, y = Score, size = n, color = n)) +
       scale_color_gradient(low = "blue") +
-      labs(title = "Score of Specified Imaging Procedure in Each State", color = "# of Radiologists", size = "# of Radiologists")
+      labs(title = "Score of Specified Imaging Procedure in Each State", color = "# of Radiologists", size = "# of Radiologists") +
+      theme(plot.title = element_text(size = rel(2.5)))
   }, height = 700, width = 1500)
 }
 

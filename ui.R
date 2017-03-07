@@ -13,6 +13,7 @@ states <- unique(state.data$State)
 
 
 ui <- fluidPage(
+  theme = "bootstrap.css",
   titlePanel("Outpatient Efficiency for Selected Measures"),
   sidebarLayout(
     sidebarPanel(
@@ -24,10 +25,11 @@ ui <- fluidPage(
       tabsetPanel(type = "tabs",
         tabPanel("Results", 
                  selectInput('state', label = "Select state", choices = states),
-                 dataTableOutput('best.hospitals') ) ,
+                 dataTableOutput('best.hospitals')) ,
         tabPanel("Map", plotlyOutput("map"), dataTableOutput("click")),
         tabPanel("Plot", plotOutput('plot'))
       )
     )
   )
 )
+
