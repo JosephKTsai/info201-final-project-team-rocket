@@ -48,7 +48,7 @@ server <- function(input, output) {
   })
   
   # This filtered data is used for the map
-  filtered.map.data <- reactive({
+  filtered.plot.data <- reactive({
     # Filtering the state data for the specified measure name
     data.state <- state.data %>% 
       filter(Measure.Name == input$measure) %>%
@@ -184,14 +184,18 @@ server <- function(input, output) {
   output$plot.description <- renderText({
     description <- paste0("The plot below shows the numer of radiologists on the X-axis and the Efficiency Score for the chosen imaging method on the Y-axis. Each point represents a state. ",
                           "The labels next to the points help to specify which state each point represents.\n\n ",
-                          "The current selected imaging method is: ", toString(input$measure))
+                          "The current selected imaging method is: ", toString(input$measure),
+                          ". The purpose of this plot is to show our inquiry into if the number of radiologists impacts the efficiency ",
+                          "of the specified scan as a whole. From what we found, it does not. In terms of patients, they shouldn't feel intimidated ",
+                          "if their state does not have as many radiologists than another state, and should feel free to choose a hospital ",
+                          "solely based on its efficiency for the chosen measure.")
   })
   
   
   
   # Output for radiologists plot vs. specified imaging
   output$plot <- renderPlot({
-    ggplot(data = filtered.map.data()) +
+    ggplot(data = filtered.plot.data()) +
       geom_point(mapping = aes(x = n, y = Score), color = "blue", size = 3) +
       scale_y_continuous(breaks = seq(0, 65, by = 2)) + 
       geom_text(aes(x = n, y = Score, label = State), hjust = 1.5, vjust = 1) + 
