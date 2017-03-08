@@ -168,19 +168,22 @@ server <- function(input, output) {
   })
   
   output$plot.description <- renderText({
-    description <- paste0("The below plot shows the State on the X axis, the Efficiency score for the chosen imaging method on the Y axis, as well as showing the number of radiologists per state through the point color and size. ",
-                          "The larger the size of the point and the lighter the color represents the greater number of physicians\n\n ",
-                          "The current selected imaging method is: ", bold(toString(input$measure)))
+    description <- paste0("The below plot shows the # of radiologists on the X axis, the Efficiency score for the chosen imaging method on the Y axis, each point represents a state",
+                          "The labels next to the points help to specify which state each point represents\n\n ",
+                          "The current selected imaging method is: ", toString(input$measure))
   })
   
   # Output for radiologists plot vs. specified imaging
   output$plot <- renderPlot({
     ggplot(data = filtered()) +
-      geom_point(mapping = aes(x = State, y = Score, size = n, color = n)) +
+      geom_point(mapping = aes(x = n, y = Score), color = "blue", size = 3) +
+      geom_text(aes(x = n, y = Score, label = State), hjust = 1.5, vjust = 1) + 
       scale_color_gradient(low = "blue") +
-      labs(title = "Score of Specified Imaging Procedure in Each State", color = "# of Radiologists", size = "# of Radiologists") +
+      labs(title = "Score of Specified Imaging Procedure vs Number of Radiologists/State", x = "# of Radiologists") +
       theme(plot.title = element_text(size = rel(2.5)))
   }, height = 700, width = 1500)
+  
+  
   
   output$intro.description <- renderText({
     about.description <- paste0("    The following visualizations of data represent information taken from several Medicare.gov ", 
