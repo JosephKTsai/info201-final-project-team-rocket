@@ -175,12 +175,16 @@ server <- function(input, output) {
   
   # Output for radiologists plot vs. specified imaging
   output$plot <- renderPlot({
+    Name <- c("AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", 
+              "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY")
     ggplot(data = filtered()) +
       geom_point(mapping = aes(x = n, y = Score), color = "blue", size = 3) +
+      geom_text(aes(x = n, y = Score, label = State), hjust = 1.5, vjust = 1) + 
       scale_color_gradient(low = "blue") +
       labs(title = "Score of Specified Imaging Procedure vs Number of Radiologists/State", x = "# of Radiologists") +
       theme(plot.title = element_text(size = rel(2.5)))
   }, height = 700, width = 1500)
+  
   
   
   output$intro.description <- renderText({
