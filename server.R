@@ -22,7 +22,11 @@ server <- function(input, output) {
     best.hospital <- filter(hospital.data, State == state) %>% 
       filter(Measure.Name == measure) %>% 
       arrange(desc(Score))
+    
+    # Getting rid of scores that are not avaliable
     best.hospital <- best.hospital[!(best.hospital$Score == "Not Available"), ]
+    
+    # Choosing the best hospital with the following information
     best.hospital <- best.hospital[c(1:5), c("Provider.ID", "Hospital.Name", "City", "Address", "ZIP.Code", "Phone.Number", "Score")]
     # Changing the column names to more readable names.
     colnames(best.hospital) <- c("Provider ID", "Hospital Name", "City", "Address", "ZIP Code", "Phone Number", "Score")
@@ -35,18 +39,23 @@ server <- function(input, output) {
     return(filtered.data())
   })
   
+  # Description of the results page
   output$results.intro <- renderText({
     rows <- nrow(filtered.data())
-    intro <- paste0("This table shows data about the top ", rows, " hospitals in the ", input$state, " state for the ",
-                    input$measure, " scan.")
+    intro <- paste0("This table shows data about the top ", rows, " hospitals in ", input$state, " for the ",
+                    input$measure, ".")
   })
   
+  # This filtered data is used for the map
   filtered <- reactive({
+    # Filtering the state data for the specified measure name
     data.state <- state.data %>% 
       filter(Measure.Name == input$measure) %>%
       select(State, Measure.Name, Score) %>%
+      # Organizing the data by state
       group_by(State) 
     
+    # Preparing the data to analyze the number of radiologists by state
     non.state.abbreviations <- c("DC", "GU", "PR")
     num.radiologists.by.state <-  radiologist.data %>%
       
@@ -54,7 +63,8 @@ server <- function(input, output) {
       filter(!(State %in% non.state.abbreviations)) %>%
       group_by(State) %>%
       summarise(n = n())
-    
+
+    # Joining the state data with the data from the number of radiologists by state to be used in a later function
     data <- full_join(data.state, num.radiologists.by.state)
     
     return (data)
@@ -168,8 +178,8 @@ server <- function(input, output) {
   })
   
   output$plot.description <- renderText({
-    description <- paste0("The below plot shows the # of radiologists on the X axis, the Efficiency score for the chosen imaging method on the Y axis, each point represents a state",
-                          "The labels next to the points help to specify which state each point represents\n\n ",
+    description <- paste0("The plot below shows the numer of radiologists on the X-axis and the Efficiency Score for the chosen imaging method on the Y-axis. Each point represents a state. ",
+                          "The labels next to the points help to specify which state each point represents.\n\n ",
                           "The current selected imaging method is: ", toString(input$measure))
   })
   
