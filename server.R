@@ -16,7 +16,7 @@ radiologist.data <- read.csv("data/Physician_Compare_National_Downloadable_File.
 server <- function(input, output) {
   
   # Finding the best 5 hospitals in the selected state for the selected scanning.
-  filtered.data <- reactive({
+  filtered.results.data <- reactive({
     state <- input$state
     measure <- input$measure
     best.hospital <- filter(hospital.data, State == state) %>% 
@@ -36,18 +36,18 @@ server <- function(input, output) {
   # Render the data table for the top 5 hospitals in the selected state
   output$best.hospitals <- renderDataTable({
     
-    return(filtered.data())
+    return(filtered.results.data())
   })
   
   # Description of the results page
   output$results.intro <- renderText({
-    rows <- nrow(filtered.data())
-    intro <- paste0("This table shows data about the top ", rows, " hospitals in ", input$state, " for the ",
+    rows <- nrow(filtered.results.data())
+    intro <- paste0("This table shows data about the top ", rows, " hospitals in ", input$state, " State for ",
                     input$measure, ".")
   })
   
   # This filtered data is used for the map
-  filtered <- reactive({
+  filtered.map.data <- reactive({
     # Filtering the state data for the specified measure name
     data.state <- state.data %>% 
       filter(Measure.Name == input$measure) %>%
@@ -186,7 +186,7 @@ server <- function(input, output) {
   
   # Output for radiologists plot vs. specified imaging
   output$plot <- renderPlot({
-    ggplot(data = filtered()) +
+    ggplot(data = filtered.map.data()) +
       geom_point(mapping = aes(x = n, y = Score), color = "blue", size = 3) +
       geom_text(aes(x = n, y = Score, label = State), hjust = 1.5, vjust = 1) + 
       scale_color_gradient(low = "blue") +
