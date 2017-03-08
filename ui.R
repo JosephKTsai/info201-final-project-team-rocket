@@ -41,8 +41,6 @@ ui <- fluidPage(
 
         tabPanel("Plot", verbatimTextOutput("plot.description"), plotOutput('plot')),
         tabPanel("Summary", verbatimTextOutput("intro.description"))
-
-
       )
     )
   )
