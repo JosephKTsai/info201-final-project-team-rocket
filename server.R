@@ -168,15 +168,13 @@ server <- function(input, output) {
   })
   
   output$plot.description <- renderText({
-    description <- paste0("The below plot shows the State on the X axis, the Efficiency score for the chosen imaging method on the Y axis, as well as showing the number of radiologists per state through the point color and size. ",
-                          "The larger the size of the point and the lighter the color represents the greater number of physicians\n\n ",
+    description <- paste0("The below plot shows the # of radiologists on the X axis, the Efficiency score for the chosen imaging method on the Y axis, each point represents a state",
+                          "The labels next to the points help to specify which state each point represents\n\n ",
                           "The current selected imaging method is: ", toString(input$measure))
   })
   
   # Output for radiologists plot vs. specified imaging
   output$plot <- renderPlot({
-    Name <- c("AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", 
-              "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY")
     ggplot(data = filtered()) +
       geom_point(mapping = aes(x = n, y = Score), color = "blue", size = 3) +
       geom_text(aes(x = n, y = Score, label = State), hjust = 1.5, vjust = 1) + 
