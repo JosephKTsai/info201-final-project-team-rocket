@@ -557,15 +557,20 @@ h1, .h1 {
 
 h2, .h2 {
   font-size: 40px;
+  font-family: "Times New Roman";
   text-align: center;
 }
 
 h3, .h3 {
   font-size: 14px;
+  font-weight: 425;
+  color: #696969;
 }
 
 h4, .h4 {
-  font-size: 50px;
+  font-size: 12px;
+  font-weight: 400;
+  color: #000000;
 }
 
 h5, .h5 {
