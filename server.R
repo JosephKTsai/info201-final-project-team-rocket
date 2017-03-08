@@ -4,14 +4,15 @@ library(dplyr)
 library(ggplot2)
 library(maps)
 library(plotly)
+library(reshape)
+
 
 # Loading in the relevant data 
-state.data <- read.csv("data/Outpatient_Imaging_Efficiency_-_State.csv")
+state.data <- read.csv("data/Outpatient_Imaging_Efficiency_-_State.csv", stringsAsFactors = FALSE)
 hospital.data <- read.csv("data/Outpatient_Imaging_Efficiency_-_Hospital.csv")
 radiologist.data <- read.csv("data/Physician_Compare_National_Downloadable_File.csv", stringsAsFactors = FALSE)
 measures <- unique(state.data$Measure.Name)
 us.map <- map_data("state")
-radiologist.data <- read.csv("data/Physician_Compare_National_Downloadable_File.csv", stringsAsFactors = FALSE)
 
 server <- function(input, output) {
   
@@ -66,6 +67,8 @@ server <- function(input, output) {
 
     # Joining the state data with the data from the number of radiologists by state to be used in a later function
     data <- full_join(data.state, num.radiologists.by.state)
+    data <- filter(data, Score != "Not Available")
+    data$Score <- as.double(data$Score)
     
     return (data)
   })
@@ -183,6 +186,8 @@ server <- function(input, output) {
                           "The labels next to the points help to specify which state each point represents.\n\n ",
                           "The current selected imaging method is: ", toString(input$measure))
   })
+  
+  
   
   # Output for radiologists plot vs. specified imaging
   output$plot <- renderPlot({
