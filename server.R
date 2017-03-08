@@ -42,7 +42,7 @@ server <- function(input, output) {
   # Description of the results page
   output$results.intro <- renderText({
     rows <- nrow(filtered.results.data())
-    intro <- paste0("This table shows data about the top ", rows, " hospitals in ", input$state, " for the ",
+    intro <- paste0("This table shows data about the top ", rows, " hospitals in ", input$state, " State for ",
                     input$measure, ".")
   })
   
