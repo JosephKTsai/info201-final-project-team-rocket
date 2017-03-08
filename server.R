@@ -193,6 +193,7 @@ server <- function(input, output) {
   output$plot <- renderPlot({
     ggplot(data = filtered.map.data()) +
       geom_point(mapping = aes(x = n, y = Score), color = "blue", size = 3) +
+      scale_y_continuous(breaks = seq(0, 65, by = 2)) + 
       geom_text(aes(x = n, y = Score, label = State), hjust = 1.5, vjust = 1) + 
       scale_color_gradient(low = "blue") +
       labs(title = "Score of Specified Imaging Procedure vs Number of Radiologists/State", x = "# of Radiologists") +
