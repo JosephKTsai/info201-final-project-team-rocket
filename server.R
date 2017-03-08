@@ -177,6 +177,7 @@ server <- function(input, output) {
     }
   })
   
+  # output description about the plot 
   output$plot.description <- renderText({
     description <- paste0("The plot below shows the numer of radiologists on the X-axis and the Efficiency Score for the chosen imaging method on the Y-axis. Each point represents a state. ",
                           "The labels next to the points help to specify which state each point represents.\n\n ",
@@ -194,7 +195,7 @@ server <- function(input, output) {
   }, height = 700, width = 1500)
   
   
-  
+  # output description regarding the app 
   output$intro.description <- renderText({
     about.description <- paste0("    The following visualizations of data represent information taken from several Medicare.gov ", 
                                 "data frames regarding outpatient imaging efficiency and physician comparison data. ", 
