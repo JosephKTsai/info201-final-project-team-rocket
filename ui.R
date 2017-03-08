@@ -38,7 +38,7 @@ ui <- fluidPage(
                            br(),
                            plotlyOutput("map"), 
                            dataTableOutput("click")),
-                  tabPanel("Plot", h3(textOutput("plot.description")),p(), plotOutput('plot'))
+                  tabPanel("Plot", h3(textOutput("plot.description")),p(), plotOutput('plot'), click = 'plot.click')
                   
                   
       )
