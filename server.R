@@ -11,7 +11,6 @@ hospital.data <- read.csv("data/Outpatient_Imaging_Efficiency_-_Hospital.csv")
 radiologist.data <- read.csv("data/Physician_Compare_National_Downloadable_File.csv", stringsAsFactors = FALSE)
 measures <- unique(state.data$Measure.Name)
 us.map <- map_data("state")
-radiologist.data <- read.csv("data/Physician_Compare_National_Downloadable_File.csv", stringsAsFactors = FALSE)
 
 server <- function(input, output) {
   
