@@ -182,7 +182,7 @@ server <- function(input, output) {
   
   # output description about the plot 
   output$plot.description <- renderText({
-    description <- paste0("The plot below shows the numer of radiologists on the X-axis and the Efficiency Score for the chosen imaging method on the Y-axis. Each point represents a state. ",
+    description <- paste0("The plot below shows the number of radiologists on the X-axis and the Efficiency Score for the chosen imaging method on the Y-axis. Each point represents a state. ",
                           "The labels next to the points help to specify which state each point represents.\n\n ",
                           "The current selected imaging method is: ", toString(input$measure),
                           ". The purpose of this plot is to show our inquiry into if the number of radiologists impacts the efficiency ",
