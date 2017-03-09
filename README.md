@@ -11,3 +11,5 @@ We decided that we wanted to make it easy for patients looking for physicians in
 by making it really easy to see the best hospitals near them, for their specific issue.
 
 We also included our inquiry into seeing if the number of radiologists affects the efficiency for the chosen measure as a whole and how that inquiry relates to patients.
+
+The libraries used to help create this application were: shiny, dplyr, ggplot2, maps, plotly, and reshape.
